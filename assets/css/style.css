@@ -279,6 +279,39 @@ a:hover { color: var(--ink); }
   .header-cta { font-size: 0.85rem; padding: 0.45rem 0.8rem; }
 }
 
+/* --- Adaptieve header: 'verduistert' mee boven de donkere hero --- */
+
+.site-header {
+  transition: background 0.3s ease, border-color 0.3s ease,
+    backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+}
+
+.site-header.over-hero {
+  background: rgba(21, 17, 28, 0.82);
+  backdrop-filter: blur(10px);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.site-header.over-hero .brand { color: #fff; }
+.site-header.over-hero .brand img { filter: invert(1) brightness(1.8); }
+.site-header.over-hero .site-nav a { color: rgba(255, 255, 255, 0.85); }
+.site-header.over-hero .site-nav a:hover { color: #fff; background: rgba(255, 255, 255, 0.12); }
+.site-header.over-hero .site-nav a[aria-current="page"] { color: #fff; }
+.site-header.over-hero .nav-cta { background: #fff; color: var(--ink) !important; }
+.site-header.over-hero .nav-cta:hover { background: rgba(255, 255, 255, 0.85) !important; }
+.site-header.over-hero .nav-toggle span,
+.site-header.over-hero .nav-toggle span::before,
+.site-header.over-hero .nav-toggle span::after { background: #fff; }
+body.nav-open .site-header.over-hero .nav-toggle span { background: transparent; }
+
+/* Op mobiel klapt het menu uit als een licht paneel → daar donkere links houden */
+@media (max-width: 880px) {
+  .site-header.over-hero .site-nav a { color: var(--ink-soft); }
+  .site-header.over-hero .site-nav a:hover { color: var(--ink); background: rgba(27, 23, 32, 0.05); }
+  .site-header.over-hero .site-nav a[aria-current="page"] { color: var(--ink); }
+  .site-header.over-hero .nav-cta { background: var(--ink); color: #fff !important; }
+}
+
 /* --- Hero --- */
 
 .hero {

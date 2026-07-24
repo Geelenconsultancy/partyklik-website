@@ -2,6 +2,22 @@
 (function () {
   "use strict";
 
+  // Adaptieve header: 'verduistert' mee zolang de donkere hero achter de
+  // header zit, en wordt weer de lichte balk zodra je bij lichte content komt.
+  (function adaptiveHeader() {
+    var header = document.querySelector(".site-header");
+    var hero = document.querySelector(".hero, .page-hero");
+    if (!header || !hero) return;
+    function onScroll() {
+      var threshold = hero.offsetHeight - header.offsetHeight - 4;
+      if (window.scrollY < threshold) header.classList.add("over-hero");
+      else header.classList.remove("over-hero");
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+  })();
+
   // Flits-oorsprong exact op de ringlamp in de herofoto zetten.
   // object-fit: cover snijdt de foto per schermformaat anders bij; hieronder
   // rekenen we uit waar het punt (ringlamp) in de bronfoto op het scherm valt.
