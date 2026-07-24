@@ -2,12 +2,50 @@
 (function () {
   "use strict";
 
+  // Intro "de foto wordt gemaakt" — klasse is pre-paint gezet door een inline
+  // snippet in de <head> van elke pagina; hier alleen opruimen en de sessie markeren.
+  if (document.documentElement.classList.contains("intro-pending")) {
+    try {
+      sessionStorage.setItem("pk-intro", "1");
+    } catch (e) {}
+    window.setTimeout(function () {
+      document.documentElement.classList.remove("intro-pending");
+    }, 2300);
+  }
+
+  // Scroll-reveal: stappen komen gestaffeld in beeld
+  var revealItems = Array.prototype.slice.call(document.querySelectorAll(".steps li"));
+  if (
+    revealItems.length &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    document.documentElement.classList.add("reveal-ready");
+    var revealCheck = function () {
+      var batch = 0;
+      revealItems = revealItems.filter(function (el) {
+        if (el.getBoundingClientRect().top < window.innerHeight * 0.88) {
+          window.setTimeout(function () {
+            el.classList.add("in-view");
+          }, 150 * batch++);
+          return false;
+        }
+        return true;
+      });
+      if (!revealItems.length) {
+        window.removeEventListener("scroll", revealCheck);
+      }
+    };
+    window.addEventListener("scroll", revealCheck, { passive: true });
+    revealCheck();
+  }
+
   // Mobiel menu
   var toggle = document.querySelector(".nav-toggle");
   if (toggle) {
     toggle.addEventListener("click", function () {
       var open = document.body.classList.toggle("nav-open");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.setAttribute("aria-label", open ? "Menu sluiten" : "Menu openen");
     });
   }
 
@@ -25,6 +63,7 @@
 
     function close() {
       box.classList.remove("open");
+      document.body.classList.remove("lightbox-open");
       img.src = "";
     }
 
@@ -34,6 +73,8 @@
         img.src = a.getAttribute("href");
         img.alt = a.querySelector("img") ? a.querySelector("img").alt : "";
         box.classList.add("open");
+        document.body.classList.add("lightbox-open");
+        box.querySelector("button").focus();
       });
     });
 

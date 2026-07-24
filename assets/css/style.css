@@ -204,9 +204,29 @@ a:hover { color: var(--ink); }
   display: none;
   background: none;
   border: 0;
-  padding: 0.5rem;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   cursor: pointer;
+  align-items: center;
+  justify-content: center;
 }
+
+/* Compacte offerte-knop in de mobiele headerbalk (naast de hamburger) */
+.header-cta {
+  display: none;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.header-cta:hover { background: var(--accent-dark); color: #fff; }
 
 .nav-toggle span,
 .nav-toggle span::before,
@@ -229,7 +249,9 @@ a:hover { color: var(--ink); }
 .nav-open .nav-toggle span::after { transform: translateY(-7px) rotate(-45deg); }
 
 @media (max-width: 880px) {
-  .nav-toggle { display: block; }
+  .nav-toggle { display: inline-flex; }
+  .header-cta { display: inline-flex; margin-left: auto; }
+  .site-header .wrap { gap: 0.6rem; }
   .site-nav {
     position: absolute;
     inset: 100% 0 auto 0;
@@ -247,6 +269,14 @@ a:hover { color: var(--ink); }
   }
   .site-nav a { display: block; padding: 0.7rem 0.8rem; }
   .nav-cta { text-align: center; margin-top: 0.4rem; }
+}
+
+/* Extra compact op smalle telefoons, zodat logo + offerteknop + hamburger passen */
+@media (max-width: 480px) {
+  .site-header .wrap { gap: 0.4rem; }
+  .site-header .brand { font-size: 1.15rem; gap: 0.5rem; }
+  .site-header .brand img { width: 34px; height: 34px; }
+  .header-cta { font-size: 0.85rem; padding: 0.45rem 0.8rem; }
 }
 
 /* --- Hero --- */
@@ -268,7 +298,7 @@ a:hover { color: var(--ink); }
   height: 100%;
   object-fit: cover;
   object-position: center 38%;
-  opacity: 0.55;
+  opacity: 0.62;
 }
 
 .hero-media::after {
@@ -286,7 +316,8 @@ a:hover { color: var(--ink); }
   max-width: 640px;
 }
 
-.hero .kicker {
+.hero .kicker,
+.page-hero .kicker {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -299,7 +330,8 @@ a:hover { color: var(--ink); }
   margin-bottom: 1.1rem;
 }
 
-.hero .kicker::before {
+.hero .kicker::before,
+.page-hero .kicker::before {
   content: "";
   width: 34px;
   height: 3px;
@@ -342,6 +374,74 @@ a:hover { color: var(--ink); }
 
 .hero-usps svg { flex: none; color: #e9c05e; }
 
+/* --- Intro: "de foto wordt gemaakt" (alleen eerste bezoek per sessie) --- */
+
+/* Flits: één zachte, gedempte witflits over de hero */
+.hero::before,
+.page-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #f7f3ec;
+  opacity: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Zoeker: vier camerahoekjes langs de randen van de hero */
+.hero::after,
+.page-hero::after {
+  content: "";
+  position: absolute;
+  inset: clamp(0.9rem, 3vw, 1.6rem);
+  opacity: 0;
+  z-index: 3;
+  pointer-events: none;
+  --c: rgba(255, 255, 255, 0.85);
+  background:
+    linear-gradient(var(--c), var(--c)) 0 0 / 30px 3px,
+    linear-gradient(var(--c), var(--c)) 0 0 / 3px 30px,
+    linear-gradient(var(--c), var(--c)) 100% 0 / 30px 3px,
+    linear-gradient(var(--c), var(--c)) 100% 0 / 3px 30px,
+    linear-gradient(var(--c), var(--c)) 0 100% / 30px 3px,
+    linear-gradient(var(--c), var(--c)) 0 100% / 3px 30px,
+    linear-gradient(var(--c), var(--c)) 100% 100% / 30px 3px,
+    linear-gradient(var(--c), var(--c)) 100% 100% / 3px 30px;
+  background-repeat: no-repeat;
+}
+
+html.intro-pending .hero::before,
+html.intro-pending .page-hero::before { animation: pk-flash 2.2s ease-out both; }
+html.intro-pending .hero::after,
+html.intro-pending .page-hero::after { animation: pk-frame 2.2s ease-out both; }
+html.intro-pending .hero-media img { animation: pk-develop 2.2s ease-out both; }
+html.intro-pending .hero-inner { animation: pk-rise 0.7s ease-out both; }
+
+@keyframes pk-flash {
+  0%, 25% { opacity: 0; }
+  34% { opacity: 0.6; }
+  55%, 100% { opacity: 0; }
+}
+
+@keyframes pk-frame {
+  0% { opacity: 0; transform: scale(1.015); }
+  12% { opacity: 1; transform: none; }
+  78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes pk-develop {
+  0% { opacity: 0.18; filter: grayscale(0.75) brightness(0.65) contrast(0.92); }
+  30% { opacity: 0.24; filter: grayscale(0.7) brightness(0.68) contrast(0.92); }
+  70% { opacity: 0.52; filter: grayscale(0.2) brightness(0.9); }
+  100% { opacity: 0.62; filter: none; }
+}
+
+@keyframes pk-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
 /* --- Knoppen --- */
 
 .btn {
@@ -365,6 +465,7 @@ a:hover { color: var(--ink); }
 .btn-primary {
   background: var(--accent);
   color: #fff;
+  box-shadow: 0 8px 26px -12px rgba(179, 128, 31, 0.65);
 }
 
 .btn-primary:hover {
@@ -400,6 +501,12 @@ a:hover { color: var(--ink); }
 
 .section-dark h2 { color: #fff; }
 .section-dark p { color: var(--on-dark-soft); }
+
+/* In donkere secties: lichte tekstkleuren laten winnen van de licht-sectie-regels */
+.section-dark .section-head .kicker { color: #e9c05e; }
+.section-dark .media-split .content p:not(.kicker) { color: var(--on-dark-soft); }
+.section-dark .checklist { color: var(--on-dark-soft); }
+.section-dark .checklist svg { color: #e9c05e; }
 
 .section-head {
   max-width: 620px;
@@ -473,6 +580,14 @@ a:hover { color: var(--ink); }
   color: var(--accent-dark);
 }
 
+.card-photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
 /* --- Stappen --- */
 
 .steps {
@@ -492,20 +607,41 @@ a:hover { color: var(--ink); }
   padding: 1.7rem 1.5rem;
   border: 1px solid rgba(27, 23, 32, 0.05);
   box-shadow: 0 6px 24px -16px rgba(27, 23, 32, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.steps li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px -18px rgba(27, 23, 32, 0.35);
 }
 
 .steps li::before {
   content: counter(step, decimal-leading-zero);
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 1rem;
-  color: var(--accent);
+  font-size: 1.6rem;
   display: inline-block;
-  padding-bottom: 0.6rem;
+  padding-bottom: 0.45rem;
   border-bottom: 3px solid;
   border-image: var(--led) 1;
   margin-bottom: 1rem;
+  background: linear-gradient(90deg, #6d5cff, #d64f9e 35%, #2ec5ce 65%, #6d5cff);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: pk-shimmer 2.4s ease-in-out infinite alternate;
 }
+
+@keyframes pk-shimmer {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+/* Scroll-reveal: stappen komen één voor één omhoog zodra ze in beeld zijn */
+.reveal-ready .steps li { opacity: 0; }
+
+.reveal-ready .steps li.in-view { animation: pk-rise 0.6s ease-out both; }
 
 .steps h3 { font-size: 1.15rem; }
 
@@ -528,6 +664,12 @@ a:hover { color: var(--ink); }
   display: flex;
   flex-direction: column;
   position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.price-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px -18px rgba(27, 23, 32, 0.35);
 }
 
 .price-card.featured {
@@ -535,15 +677,41 @@ a:hover { color: var(--ink); }
   color: var(--on-dark);
   box-shadow: var(--shadow);
   border: 0;
+  transform: scale(1.02);
+  animation: pk-card-glow 2.4s ease-in-out infinite alternate;
+}
+
+.price-card.featured:hover { transform: scale(1.02) translateY(-5px); }
+
+/* Rondlopende LED-rand om de uitgelichte prijskaart */
+@property --pk-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }
 
 .price-card.featured::before {
   content: "";
   position: absolute;
-  inset: 0 0 auto 0;
-  height: 4px;
-  border-radius: var(--radius) var(--radius) 0 0;
-  background: var(--led);
+  inset: -3px;
+  border-radius: calc(var(--radius) + 3px);
+  padding: 3px;
+  background: conic-gradient(from var(--pk-angle), #6d5cff, #d64f9e 30%, #2ec5ce 55%, #d64f9e 80%, #6d5cff);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: pk-border-spin 4s linear infinite;
+}
+
+@keyframes pk-border-spin {
+  to { --pk-angle: 360deg; }
+}
+
+@keyframes pk-card-glow {
+  from { box-shadow: 0 12px 40px -18px rgba(27, 23, 32, 0.35), 0 0 24px -6px rgba(109, 92, 255, 0.5); }
+  to { box-shadow: 0 12px 40px -18px rgba(27, 23, 32, 0.35), 0 0 34px -4px rgba(214, 79, 158, 0.65); }
 }
 
 .price-card .badge {
@@ -628,10 +796,12 @@ a:hover { color: var(--ink); }
   border-radius: var(--radius-sm);
   overflow: hidden;
   position: relative;
+  cursor: zoom-in;
 }
 
 .gallery img {
   width: 100%;
+  height: auto;
   transition: transform 0.4s ease;
 }
 
@@ -650,6 +820,8 @@ a:hover { color: var(--ink); }
 }
 
 .lightbox.open { display: grid; }
+
+body.lightbox-open { overflow: hidden; }
 
 .lightbox img {
   max-height: 86vh;
@@ -908,6 +1080,23 @@ details.faq-item .faq-body p:last-child { margin-bottom: 0; }
   justify-content: space-between;
 }
 
+/* Realisatie-credit: mag opvallen */
+.footer-bottom .credit { color: var(--on-dark); }
+
+.footer-bottom .credit a {
+  color: #e9c05e;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(233, 192, 94, 0.55);
+}
+
+.footer-bottom .credit a:hover {
+  color: #fff;
+  text-decoration-color: #d64f9e;
+}
+
 /* --- Pagina-hero (subpagina's) --- */
 
 .page-hero {
@@ -962,9 +1151,157 @@ details.faq-item .faq-body p:last-child { margin-bottom: 0; }
 
 .stat-row .stat span { color: var(--ink-faint); font-size: 0.95rem; }
 
+/* --- Tijdelijk beoordelingsscherm (preview voor Arjan) --- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+html.review-gated body { overflow: hidden; }
+
+html.review-gated .site-header,
+html.review-gated main,
+html.review-gated .site-footer,
+html.review-gated .wa-fab { visibility: hidden; }
+
+.review-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: var(--dark);
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.review-gate::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: var(--led);
+}
+
+.review-gate-card {
+  width: min(100%, 380px);
+  text-align: center;
+  color: var(--on-dark-soft);
+  display: grid;
+  gap: 0.9rem;
+  justify-items: center;
+}
+
+.review-gate-card h1 {
+  color: #fff;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.review-gate-card h1 em { font-style: normal; color: var(--accent); }
+
+.review-gate-kicker {
+  font-family: var(--font-head);
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #e9c05e;
+  margin: 0;
+}
+
+.review-gate-card p { margin: 0; }
+
+.review-gate-card input {
+  font: inherit;
+  text-align: center;
+  letter-spacing: 0.3em;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  width: min(100%, 240px);
+}
+
+.review-gate-card input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.review-gate-error { color: #f0a5c8; font-size: 0.95rem; }
+
+/* --- WhatsApp-knop --- */
+
+.wa-fab {
+  position: fixed;
+  right: clamp(1rem, 3vw, 1.6rem);
+  bottom: clamp(1rem, 3vw, 1.6rem);
+  z-index: 70;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25d366;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  box-shadow: 0 10px 26px -10px rgba(37, 211, 102, 0.7), 0 4px 12px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wa-fab:hover {
+  transform: scale(1.08);
+  color: #fff;
+  box-shadow: 0 14px 30px -10px rgba(37, 211, 102, 0.85), 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+.wa-fab svg {
+  width: 30px;
+  height: 30px;
+}
+
+/* --- LED-balkjes: disco-effect ---
+   Het gradient-licht glijdt heen en weer over de balk en gloeit zacht mee.
+   Geldt voor de nav-onderstreping en alle kicker-balkjes, op elke pagina. */
+
+.site-nav a[aria-current="page"]::after,
+.hero .kicker::before,
+.page-hero .kicker::before,
+.section-head .kicker::before {
+  background: linear-gradient(90deg, #6d5cff, #d64f9e 25%, #2ec5ce 50%, #d64f9e 75%, #6d5cff);
+  background-size: 250% 100%;
+  animation: pk-disco 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes pk-disco {
+  from {
+    background-position: 0% 50%;
+    box-shadow: 0 0 6px rgba(109, 92, 255, 0.65), 0 0 14px rgba(214, 79, 158, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 7px rgba(214, 79, 158, 0.7), 0 0 16px rgba(214, 79, 158, 0.4);
+  }
+  to {
+    background-position: 100% 50%;
+    box-shadow: 0 0 6px rgba(46, 197, 206, 0.65), 0 0 14px rgba(109, 92, 255, 0.35);
+  }
+}
+
 ::selection { background: rgba(214, 79, 158, 0.25); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
+  /* Rustig alternatief voor de intro: alleen een zachte fade, geen flits of zoeker */
+  html.intro-pending .hero-media img { animation: pk-fade 1s ease-out both !important; }
+}
+
+@keyframes pk-fade {
+  from { opacity: 0; }
+  to { opacity: 0.62; }
 }
