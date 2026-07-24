@@ -3,14 +3,36 @@
   "use strict";
 
   // Intro "de foto wordt gemaakt" — klasse is pre-paint gezet door een inline
-  // snippet in de <head> van elke pagina; hier alleen opruimen en de sessie markeren.
+  // snippet in de <head> van elke pagina; hier de aftelling tonen, opruimen en de
+  // sessie markeren.
   if (document.documentElement.classList.contains("intro-pending")) {
     try {
       sessionStorage.setItem("pk-intro", "1");
     } catch (e) {}
+
+    // Photobooth-aftelling "3 · 2 · 1 · Lachen! 📸" in het zoeker-kader.
+    // Alleen tonen als beweging is toegestaan; anders blijft het rustig.
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      var heroEl = document.querySelector(".hero, .page-hero");
+      if (heroEl) {
+        var cd = document.createElement("div");
+        cd.className = "pk-countdown";
+        cd.setAttribute("aria-hidden", "true");
+        cd.innerHTML =
+          '<span class="pk-cd-num pk-cd-3">3</span>' +
+          '<span class="pk-cd-num pk-cd-2">2</span>' +
+          '<span class="pk-cd-num pk-cd-1">1</span>' +
+          '<span class="pk-cd-smile"><span class="pk-cd-emoji">📸</span>Lachen!</span>';
+        heroEl.appendChild(cd);
+        window.setTimeout(function () {
+          cd.remove();
+        }, 2900);
+      }
+    }
+
     window.setTimeout(function () {
       document.documentElement.classList.remove("intro-pending");
-    }, 2300);
+    }, 2900);
   }
 
   // Scroll-reveal: stappen komen gestaffeld in beeld

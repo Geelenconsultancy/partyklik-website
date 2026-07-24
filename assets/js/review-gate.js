@@ -6,6 +6,10 @@
   "use strict";
   var CODE = "8847";
   try {
+    // Directe toegang via link, bijv. https://partyklik.nl/?preview=8847
+    if (new URLSearchParams(location.search).get("preview") === CODE) {
+      localStorage.setItem("pk-review", CODE);
+    }
     if (localStorage.getItem("pk-review") === CODE) return;
   } catch (e) {}
 

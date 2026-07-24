@@ -411,35 +411,89 @@ a:hover { color: var(--ink); }
 }
 
 html.intro-pending .hero::before,
-html.intro-pending .page-hero::before { animation: pk-flash 2.2s ease-out both; }
+html.intro-pending .page-hero::before { animation: pk-flash 2.8s ease-out both; }
 html.intro-pending .hero::after,
-html.intro-pending .page-hero::after { animation: pk-frame 2.2s ease-out both; }
-html.intro-pending .hero-media img { animation: pk-develop 2.2s ease-out both; }
-html.intro-pending .hero-inner { animation: pk-rise 0.7s ease-out both; }
+html.intro-pending .page-hero::after { animation: pk-frame 2.8s ease-out both; }
+html.intro-pending .hero-media img { animation: pk-develop 2.8s ease-out both; }
+html.intro-pending .hero-inner { animation: pk-rise 0.7s ease-out 1.9s both; }
 
+/* Flits valt vlak ná "Lachen!" (rond 68%) */
 @keyframes pk-flash {
-  0%, 25% { opacity: 0; }
-  34% { opacity: 0.6; }
-  55%, 100% { opacity: 0; }
+  0%, 63% { opacity: 0; }
+  70% { opacity: 0.7; }
+  84%, 100% { opacity: 0; }
 }
 
 @keyframes pk-frame {
-  0% { opacity: 0; transform: scale(1.015); }
-  12% { opacity: 1; transform: none; }
-  78% { opacity: 1; }
+  0% { opacity: 0; transform: scale(1.02); }
+  8% { opacity: 1; transform: none; }
+  82% { opacity: 1; }
   100% { opacity: 0; }
 }
 
+/* Foto blijft "onbelicht" tijdens het aftellen en komt pas na de flits op */
 @keyframes pk-develop {
-  0% { opacity: 0.18; filter: grayscale(0.75) brightness(0.65) contrast(0.92); }
-  30% { opacity: 0.24; filter: grayscale(0.7) brightness(0.68) contrast(0.92); }
-  70% { opacity: 0.52; filter: grayscale(0.2) brightness(0.9); }
+  0%, 63% { opacity: 0.16; filter: grayscale(0.8) brightness(0.6) contrast(0.9); }
+  70% { opacity: 0.5; filter: grayscale(0.35) brightness(1.15) contrast(0.95); }
   100% { opacity: 0.62; filter: none; }
 }
 
 @keyframes pk-rise {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: none; }
+}
+
+/* --- Aftel-overlay: "3 · 2 · 1 · Lachen!" in het zoeker-kader --- */
+
+.pk-countdown {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.pk-countdown span {
+  grid-area: 1 / 1;
+  opacity: 0;
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55), 0 0 40px rgba(109, 92, 255, 0.5);
+}
+
+.pk-countdown .pk-cd-num { font-size: clamp(4rem, 16vw, 9rem); line-height: 1; }
+
+.pk-countdown .pk-cd-smile {
+  font-size: clamp(1.8rem, 6vw, 3.2rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2em;
+}
+
+.pk-countdown .pk-cd-smile .pk-cd-emoji { font-size: 1.5em; }
+
+/* elk element: kort inzoomen + fade, achter elkaar */
+.pk-countdown .pk-cd-3 { animation: pk-pop 0.6s ease-out 0.15s both; }
+.pk-countdown .pk-cd-2 { animation: pk-pop 0.6s ease-out 0.75s both; }
+.pk-countdown .pk-cd-1 { animation: pk-pop 0.6s ease-out 1.35s both; }
+.pk-countdown .pk-cd-smile { animation: pk-smile 0.85s ease-out 1.95s both; }
+
+@keyframes pk-pop {
+  0% { opacity: 0; transform: scale(1.6); }
+  25% { opacity: 1; transform: scale(1); }
+  75% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.8); }
+}
+
+@keyframes pk-smile {
+  0% { opacity: 0; transform: scale(0.6) rotate(-4deg); }
+  30% { opacity: 1; transform: scale(1.08) rotate(0deg); }
+  70% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.1); }
 }
 
 /* --- Knoppen --- */
