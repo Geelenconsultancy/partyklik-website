@@ -390,7 +390,8 @@ a:hover { color: var(--ink); }
     rgba(255, 250, 238, 0.9) 20%,
     rgba(255, 250, 238, 0) 60%);
   background-repeat: no-repeat;
-  background-position: 35% 36%; /* positie van de ringlamp in de hero-uitsnede */
+  /* Positie wordt door main.js exact op de ringlamp gezet (fallback voor het geval JS uitstaat) */
+  background-position: var(--flash-x, 35%) var(--flash-y, 36%);
   background-size: 40% 40%;
 }
 

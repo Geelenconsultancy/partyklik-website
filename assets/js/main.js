@@ -2,6 +2,31 @@
 (function () {
   "use strict";
 
+  // Flits-oorsprong exact op de ringlamp in de herofoto zetten.
+  // object-fit: cover snijdt de foto per schermformaat anders bij; hieronder
+  // rekenen we uit waar het punt (ringlamp) in de bronfoto op het scherm valt.
+  (function positioneerFlits() {
+    var hero = document.querySelector(".hero");
+    var img = hero && hero.querySelector(".hero-media img");
+    if (!hero || !img) return;
+    var FX = 0.342, FY = 0.232; // positie van de ringlamp in de bronfoto (fractie)
+    var POSX = 0.5, POSY = 0.38; // object-position: center 38%
+    function update() {
+      var CW = hero.clientWidth, CH = hero.clientHeight;
+      var NW = img.naturalWidth || 1200, NH = img.naturalHeight || 1600;
+      if (!CW || !CH) return;
+      var scale = Math.max(CW / NW, CH / NH);
+      var RW = NW * scale, RH = NH * scale;
+      var sx = (CW - RW) * POSX + FX * RW;
+      var sy = (CH - RH) * POSY + FY * RH;
+      hero.style.setProperty("--flash-x", ((sx / CW) * 100).toFixed(1) + "%");
+      hero.style.setProperty("--flash-y", ((sy / CH) * 100).toFixed(1) + "%");
+    }
+    if (img.complete && img.naturalWidth) update();
+    else img.addEventListener("load", update);
+    window.addEventListener("resize", update);
+  })();
+
   // Intro "de foto wordt gemaakt" — klasse is pre-paint gezet door een inline
   // snippet in de <head> van elke pagina; hier de aftelling tonen, opruimen en de
   // sessie markeren.
