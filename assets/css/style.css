@@ -173,6 +173,7 @@ a:hover { color: var(--ink); }
   font-size: 0.97rem;
   padding: 0.45rem 0.65rem;
   border-radius: 10px;
+  white-space: nowrap;
   transition: color 0.15s, background 0.15s;
 }
 
@@ -248,7 +249,7 @@ a:hover { color: var(--ink); }
 .nav-open .nav-toggle span::before { transform: translateY(7px) rotate(45deg); }
 .nav-open .nav-toggle span::after { transform: translateY(-7px) rotate(-45deg); }
 
-@media (max-width: 880px) {
+@media (max-width: 1080px) {
   .nav-toggle { display: inline-flex; }
   .header-cta { display: inline-flex; margin-left: auto; }
   .site-header .wrap { gap: 0.6rem; }
@@ -304,8 +305,8 @@ a:hover { color: var(--ink); }
 .site-header.over-hero .nav-toggle span::after { background: #fff; }
 body.nav-open .site-header.over-hero .nav-toggle span { background: transparent; }
 
-/* Op mobiel klapt het menu uit als een licht paneel → daar donkere links houden */
-@media (max-width: 880px) {
+/* Mobiel/tablet: menu klapt uit als een licht paneel → daar donkere links houden */
+@media (max-width: 1080px) {
   .site-header.over-hero .site-nav a { color: var(--ink-soft); }
   .site-header.over-hero .site-nav a:hover { color: var(--ink); background: rgba(27, 23, 32, 0.05); }
   .site-header.over-hero .site-nav a[aria-current="page"] { color: var(--ink); }
