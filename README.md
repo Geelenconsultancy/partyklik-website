@@ -22,6 +22,8 @@ en open http://localhost:8000.
 | `projecten.html` | Galerij, samenwerkingen en toekomstplannen |
 | `faq.html` | Veelgestelde vragen (incl. FAQPage-schema) |
 | `contact.html` | Offerteformulier (FormSubmit) en contactinfo |
+| `privacy.html` | Privacy- en cookieverklaring |
+| `algemene-voorwaarden.html` | Algemene voorwaarden (16 artikelen) |
 | `assets/` | CSS, JS, geoptimaliseerde foto's en fonts |
 
 ## Deploy
