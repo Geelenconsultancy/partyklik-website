@@ -4,10 +4,10 @@
 // naar info@partyklik.com, met de aanvrager als Reply-To. Antwoordt met
 // {"success":true} of {"success":false}; contact.html toont bij false het vangnet.
 //
-// Instellingen (Cloudflare → Worker → Settings → Variables and Secrets):
+// Instellingen (zie README.md in deze map):
 //   RESEND_API_KEY  verplicht, als Secret. Nooit in deze (publieke) repo zetten.
-//   TO              optioneel; standaard info@partyklik.com. Handig om eerst naar
-//                   je eigen adres te testen.
+//   TO              optioneel; standaard info@partyklik.com. Alleen om te testen, via
+//                   `wrangler deploy --var TO:…`; de volgende gewone deploy wist hem.
 //   FROM            optioneel; standaard "PartyKlik website <formulier@partyklik.nl>".
 //
 // De ontvanger staat vast in de Worker en komt nooit uit het formulier, zodat niemand

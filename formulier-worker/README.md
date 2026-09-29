@@ -9,47 +9,46 @@ mailt de aanvraag via Resend naar info@partyklik.com, met de aanvrager als Reply
 - Alleen verzoeken vanaf partyklik.nl worden aangenomen; het honeypot-veld `_honey` vangt bots.
 - **De Resend-sleutel staat nooit in deze repo** (die is publiek), alleen als secret in Cloudflare.
 
-## Eenmalig instellen (±20 minuten)
+## Stand
 
-### 1. Resend: domein en sleutel
+Live sinds 29 september 2026.
 
-1. Maak een gratis account op https://resend.com.
-2. **Domains → Add domain** → `partyklik.nl`, regio **Ireland (eu-west-1)**.
-3. Resend toont drie DNS-records. Zet ze bij TransIP → Domeinen → partyklik.nl → DNS. Kopieer
-   de waarden precies uit Resend. Het gaat om ongeveer:
+| Onderdeel | Waar |
+|---|---|
+| Worker | `partyklik-formulier` in het Cloudflare-account van Sjors → https://partyklik-formulier.geelenconsultancy.workers.dev |
+| Secret `RESEND_API_KEY` | Resend-sleutel *partyklik-formulier (Cloudflare Worker)*: alleen *sending access*, alleen voor partyklik.nl |
+| Resend-domein | `partyklik.nl`, regio eu-west-1 (Ierland), open- en kliktracking uit |
+| Afzender | `PartyKlik website <formulier@partyklik.nl>` |
 
-   | Naam | Type | Waarde |
-   |---|---|---|
-   | `send` | MX | `feedback-smtp.eu-west-1.amazonses.com` (prioriteit 10) |
-   | `send` | TXT | `v=spf1 include:amazonses.com ~all` |
-   | `resend._domainkey` | TXT | lange sleutel, begint met `p=` |
+De DNS-records voor Resend staan bij TransIP (Domeinen → partyklik.nl → DNS), op subdomeinen.
+Het null-MX- en SPF-record op `@` blijven daardoor ongemoeid. Haal deze records niet weg,
+anders stopt het formulier met mailen:
 
-   Let op: zet het type in TransIP goed (standaard staat het op A). Het null-MX- en
-   SPF-record op `@` blijven zoals ze zijn; deze records staan op subdomeinen.
-4. Klik in Resend op **Verify**. Na een paar minuten staat het domein op *Verified*.
-5. **API Keys → Create API key**: rechten *Sending access*, domein `partyklik.nl`. Kopieer de
-   sleutel (begint met `re_`); je ziet hem maar één keer.
+| Naam | Type | Waarde |
+|---|---|---|
+| `resend._domainkey` | TXT | DKIM-sleutel, begint met `p=` (staat in Resend onder Domains) |
+| `send` | MX | `10 feedback-smtp.eu-west-1.amazonses.com.` |
+| `send` | TXT | `v=spf1 include:amazonses.com ~all` |
+| `rsend` | CNAME | `send.forge.rmta.net.` |
 
-### 2. Cloudflare: de Worker
+## Beheer
 
-1. Maak een gratis account op https://dash.cloudflare.com (een creditcard is niet nodig).
-2. **Workers & Pages → Create → Create Worker** (Hello World). Naam: `partyklik-formulier` → **Deploy**.
-3. **Edit code**: vervang alles door de inhoud van `src/index.js` uit deze map → **Deploy**.
-4. **Settings → Variables and Secrets → Add**:
-   - Type *Secret*, naam `RESEND_API_KEY`, waarde: de sleutel uit stap 1.5.
-   - Type *Text*, naam `TO`, waarde: **je eigen e-mailadres**, zodat de test niet bij Arjan landt.
-5. Noteer de URL van de Worker, iets als `https://partyklik-formulier.<jouw-naam>.workers.dev`.
+Code aanpassen en opnieuw uitrollen, in deze map (met een Cloudflare-token met het sjabloon
+*Edit Cloudflare Workers* in `CLOUDFLARE_API_TOKEN`):
 
-### 3. Testen en omzetten
+    npx wrangler deploy
 
-1. Geef Claude de Worker-URL. Die zet de `action` van het formulier om, werkt de
-   privacyverklaring bij en test met een onderschepte verzending.
-2. Eerste echte test: die gaat naar je eigen adres (variabele `TO`).
-3. Klopt het, verwijder dan de variabele `TO` in Cloudflare. Vanaf dat moment gaat alles naar
-   info@partyklik.com. Doe daarna hooguit één eindtest naar Arjan, en alleen in overleg.
-
-Liever via de opdrachtregel: `npx wrangler deploy` en `npx wrangler secret put RESEND_API_KEY`
-in deze map.
+- `wrangler deploy` zet de variabelen zoals `wrangler.toml` ze beschrijft en wist variabelen
+  die alleen in het dashboard staan. Het secret blijft wel staan.
+- **Testen naar een ander adres** dan info@partyklik.com: rol tijdelijk uit met
+  `npx wrangler deploy --var TO:jouw@adres.nl`, test met curl (met de header
+  `Origin: https://partyklik.nl`) en rol daarna opnieuw uit zonder `--var`. Dan is `TO` weg en
+  gaat alles weer naar info@partyklik.com. Zet `TO` niet in het dashboard; de volgende deploy
+  wist hem ongemerkt.
+- **Sleutel vervangen**: maak in Resend een nieuwe sleutel met *Sending access* voor
+  partyklik.nl, zet hem met `npx wrangler secret put RESEND_API_KEY` en trek daarna de oude in.
+- Foutmeldingen van Resend zie je live in Cloudflare onder de Worker → **Logs**, of met
+  `npx wrangler tail`.
 
 ## Hoe het antwoordt
 
@@ -62,4 +61,4 @@ in deze map.
 | `RESEND_API_KEY` ontbreekt | 500 | `{"success":false}` |
 
 Bij `success:false` toont `contact.html` het vangnet: een melding met voorgevulde mail- en
-WhatsApp-link. Foutmeldingen van Resend staan in Cloudflare onder de Worker → **Logs**.
+WhatsApp-link.

@@ -57,19 +57,13 @@
     <section class="section">
       <div class="wrap">
         <div class="grid-2" style="align-items:start">
-          <!-- Verzenden gaat via fetch (script onderaan): bij succes door naar bedankt.html,
-               bij een storing een melding met mail- en WhatsApp-alternatief in plaats van
-               een foutpagina. Daarom het AJAX-endpoint en geen _next. -->
-          <form id="offerteformulier" class="card" style="padding:2rem 1.8rem" action="https://formsubmit.co/ajax/info@partyklik.com" method="POST">
-            <input type="hidden" name="_subject" value="Nieuwe offerteaanvraag via partyklik.nl">
-            <!-- Leesbare tabelopmaak in de mail in plaats van een platte opsomming. -->
-            <input type="hidden" name="_template" value="table">
+          <!-- Verzenden gaat via fetch (script onderaan) naar onze eigen verzender, een
+               Cloudflare Worker die via Resend mailt (broncode in formulier-worker/). Die
+               zet onderwerp, opmaak en Reply-To zelf. Bij succes door naar bedankt.html,
+               bij een storing een melding met mail- en WhatsApp-alternatief. -->
+          <form id="offerteformulier" class="card" style="padding:2rem 1.8rem" action="https://partyklik-formulier.geelenconsultancy.workers.dev" method="POST">
             <!-- Geen reCAPTCHA: dat is een Google-tracker en die staat nergens op deze
-                 site. Het honeypot-veld hieronder vangt de bots af. -->
-            <input type="hidden" name="_captcha" value="false">
-            <!-- Reply-to: het script onderaan deze pagina kopieert hier het ingevulde
-                 e-mailadres in, zodat 'Beantwoorden' rechtstreeks naar de aanvrager gaat. -->
-            <input type="hidden" name="_replyto" value="">
+                 site. Dit honeypot-veld vangt de bots af. -->
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
             <div class="form-grid">
               <div class="field">
@@ -251,8 +245,8 @@
     })();
 
     // Versturen via fetch. Lukt het, dan door naar bedankt.html. Lukt het niet (serverfout,
-    // geen verbinding, onleesbaar antwoord, formulier niet geactiveerd, time-out), dan een
-    // melding met een voorgevulde mail- en WhatsApp-link, zodat de aanvraag toch aankomt.
+    // geen verbinding, onleesbaar antwoord, time-out), dan een melding met een voorgevulde
+    // mail- en WhatsApp-link, zodat de aanvraag toch aankomt.
     (function () {
       var form = document.getElementById("offerteformulier");
       if (!form) return;
@@ -312,12 +306,6 @@
       });
 
       form.addEventListener("submit", function (e) {
-        // Reply-to vullen met het ingevulde e-mailadres. Zonder dit komt de aanvraag
-        // binnen met FormSubmit als afzender en werkt 'Beantwoorden' niet.
-        var email = document.getElementById("email");
-        var replyto = form.querySelector('input[name="_replyto"]');
-        if (email && replyto) replyto.value = email.value.trim();
-
         if (!window.fetch || !window.FormData) return; // heel oude browser: gewoon posten
         e.preventDefault();
         if (bezig) return;
@@ -337,9 +325,9 @@
           signal: controller ? controller.signal : undefined
         })
           .then(function (res) {
-            // FormSubmit antwoordt met {"success":"true"} (als tekst); true accepteren we ook.
+            // De verzender antwoordt met {"success":true} of {"success":false}.
             return res.json().then(function (data) {
-              return res.ok && !!data && String(data.success) === "true";
+              return res.ok && !!data && data.success === true;
             }, function () {
               return false;
             });

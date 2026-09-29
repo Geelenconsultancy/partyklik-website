@@ -21,11 +21,12 @@ en open http://localhost:8000.
 | `over-ons.html` | Het verhaal van PartyKlik |
 | `projecten.html` | Galerij, samenwerkingen en toekomstplannen |
 | `faq.html` | Veelgestelde vragen (incl. FAQPage-schema) |
-| `contact.html` | Offerteformulier (FormSubmit) en contactinfo |
+| `contact.html` | Offerteformulier en contactinfo |
+| `formulier-worker/` | Verzender van het offerteformulier (Cloudflare Worker + Resend); draait apart bij Cloudflare |
 | `privacy.html` | Privacy- en cookieverklaring |
 | `algemene-voorwaarden.html` | Algemene voorwaarden (16 artikelen) |
 | `assets/` | CSS, JS, geoptimaliseerde foto's en fonts |
 
 ## Deploy
 
-Upload de volledige inhoud van deze map naar de webroot van de hosting. `sitemap.xml` en `robots.txt` staan in de root; het formulier vereist eenmalige activatie van FormSubmit door de eigenaar van info@partyklik.com.
+Upload de volledige inhoud van deze map naar de webroot van de hosting. `sitemap.xml` en `robots.txt` staan in de root. Het offerteformulier post naar een aparte Cloudflare Worker; hoe je die beheert staat in `formulier-worker/README.md`.
