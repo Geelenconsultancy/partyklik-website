@@ -1062,6 +1062,8 @@ details.faq-item .faq-body p:last-child { margin-bottom: 0; }
 
 .field.full { grid-column: 1 / -1; }
 
+.field[hidden] { display: none; }
+
 .field label {
   font-weight: 600;
   font-size: 0.95rem;

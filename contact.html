@@ -8,7 +8,7 @@
   <link rel="canonical" href="https://partyklik.nl/contact.html">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <meta name="theme-color" content="#191521">
-  <link rel="stylesheet" href="assets/css/style.css?v=17">
+  <link rel="stylesheet" href="assets/css/style.css?v=18">
   <script>try{if(!sessionStorage.getItem("pk-intro"))document.documentElement.classList.add("intro-pending")}catch(e){}</script>
   <meta property="og:type" content="website">
   <meta property="og:locale" content="nl_NL">
@@ -89,6 +89,15 @@
                 <input id="datum" name="Datum" type="date">
               </div>
               <div class="field">
+                <label for="pakket">Voorkeurspakket</label>
+                <select id="pakket" name="Pakket">
+                  <option value="">Nog geen voorkeur</option>
+                  <option value="basic">Basic — €449</option>
+                  <option value="standaard">Standaard — €549</option>
+                  <option value="premium">Premium — €699</option>
+                </select>
+              </div>
+              <div class="field">
                 <label for="soort">Soort evenement</label>
                 <select id="soort" name="Soort evenement">
                   <option>Bruiloft</option>
@@ -99,14 +108,10 @@
                   <option>Anders</option>
                 </select>
               </div>
-              <div class="field">
-                <label for="pakket">Voorkeurspakket</label>
-                <select id="pakket" name="Pakket">
-                  <option value="">Nog geen voorkeur</option>
-                  <option value="basic">Basic — €449</option>
-                  <option value="standaard">Standaard — €549</option>
-                  <option value="premium">Premium — €699</option>
-                </select>
+              <!-- Verschijnt alleen als bij 'Soort evenement' voor 'Anders' is gekozen (script onderaan). -->
+              <div class="field full" id="veld-soort-anders" hidden>
+                <label for="soort-anders">Wat voor event is het?</label>
+                <input id="soort-anders" name="Soort evenement (toelichting)" type="text" placeholder="Bijv. babyshower, communie of open dag">
               </div>
               <div class="field full">
                 <label for="locatie">Locatie / plaats van het evenement</label>
@@ -157,6 +162,10 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
                 <span><a href="tel:+31610643176">+31 6 10 64 31 76</a><br><small>Even bellen mag ook — we nemen op zodra we niet op een feest staan.</small></span>
               </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
+                <span><a href="https://www.instagram.com/party_klik/" target="_blank" rel="noopener">Volg ons op Instagram</a><br><small>Reserveren kan ook via een DM.</small></span>
+              </li>
             </ul>
             <p style="margin-top:1.6rem;margin-bottom:0"><strong style="color:#fff">Tip:</strong> populaire data zijn snel volgeboekt. Vraag op tijd een offerte aan — reserveren is pas definitief na akkoord, dus je zit nergens aan vast.</p>
           </aside>
@@ -194,6 +203,7 @@
           <ul>
             <li><a href="mailto:info@partyklik.com">info@partyklik.com</a></li>
             <li><a href="tel:+31610643176">+31 6 10 64 31 76</a></li>
+            <li><a href="https://www.instagram.com/party_klik/" target="_blank" rel="noopener">Instagram @party_klik</a></li>
             <li>Zeist, regio Utrecht</li>
             <li>Binnen 30 km geen reiskosten</li>
           </ul>
@@ -203,6 +213,7 @@
         <a href="algemene-voorwaarden.html">Algemene voorwaarden</a>
         <a href="privacy.html">Privacy &amp; cookies</a>
         <span>KvK 42034187</span>
+        <span>Btw NL005445685B98</span>
       </div>
       <div class="footer-bottom">
         <span>© 2026 PartyKlik. Alle rechten voorbehouden.</span>
@@ -221,6 +232,22 @@
         var sel = document.getElementById("pakket");
         if (sel) sel.value = p;
       }
+    })();
+
+    // 'Anders' gekozen bij soort evenement: extra veld tonen en verplicht maken.
+    (function () {
+      var soort = document.getElementById("soort");
+      var veld = document.getElementById("veld-soort-anders");
+      var invoer = document.getElementById("soort-anders");
+      if (!soort || !veld || !invoer) return;
+      function bijwerken() {
+        var anders = soort.value === "Anders";
+        veld.hidden = !anders;
+        invoer.required = anders;
+        if (!anders) invoer.value = "";
+      }
+      soort.addEventListener("change", bijwerken);
+      bijwerken(); // ook na terugnavigeren met een al gekozen waarde
     })();
 
     // Versturen via fetch. Lukt het, dan door naar bedankt.html. Lukt het niet (serverfout,
@@ -250,6 +277,7 @@
           ["Telefoon", veld("telefoon")],
           ["Datum", veld("datum").replace(/^(\d{4})-(\d{2})-(\d{2})$/, "$3-$2-$1")],
           ["Soort evenement", veld("soort")],
+          ["Toelichting", veld("soort-anders")],
           ["Pakket", veld("pakket")],
           ["Locatie", veld("locatie")]
         ].filter(function (r) { return r[1]; }).map(function (r) { return r[0] + ": " + r[1]; });

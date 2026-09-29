@@ -18,7 +18,7 @@ const STANDAARD_FROM = "PartyKlik website <formulier@partyklik.nl>";
 const TOEGESTANE_HERKOMST = ["https://partyklik.nl", "https://www.partyklik.nl"];
 
 // Velden uit het formulier, in de volgorde van de mail. Alles daarbuiten negeren we.
-const VELDEN = ["Naam", "E-mail", "Telefoon", "Datum", "Soort evenement", "Pakket", "Locatie", "Bericht"];
+const VELDEN = ["Naam", "E-mail", "Telefoon", "Datum", "Soort evenement", "Soort evenement (toelichting)", "Pakket", "Locatie", "Bericht"];
 const PAKKETTEN = { basic: "Basic — €449", standaard: "Standaard — €549", premium: "Premium — €699" };
 const MAX_LENGTE = { Bericht: 5000 };
 const MAX_LENGTE_STANDAARD = 300;
