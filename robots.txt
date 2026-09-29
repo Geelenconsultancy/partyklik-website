@@ -1,7 +1,5 @@
-# TIJDELIJK: site staat in preview-modus voor beoordeling.
-# Bij publieke lancering: vervang dit blok door de originele regels
-# (Allow: / met Disallow: /bedankt.html) en laat de Sitemap-regel staan.
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /bedankt.html
 
 Sitemap: https://partyklik.nl/sitemap.xml
