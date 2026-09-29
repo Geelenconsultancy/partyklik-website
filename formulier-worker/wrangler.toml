@@ -1,0 +1,6 @@
+name = "partyklik-formulier"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+# De API-sleutel van Resend gaat NIET hier in (deze repo is publiek), maar als secret:
+#   npx wrangler secret put RESEND_API_KEY
