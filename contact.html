@@ -8,7 +8,7 @@
   <link rel="canonical" href="https://partyklik.nl/contact.html">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <meta name="theme-color" content="#191521">
-  <link rel="stylesheet" href="assets/css/style.css?v=16">
+  <link rel="stylesheet" href="assets/css/style.css?v=17">
   <script>try{if(!sessionStorage.getItem("pk-intro"))document.documentElement.classList.add("intro-pending")}catch(e){}</script>
   <meta property="og:type" content="website">
   <meta property="og:locale" content="nl_NL">
@@ -57,9 +57,11 @@
     <section class="section">
       <div class="wrap">
         <div class="grid-2" style="align-items:start">
-          <form id="offerteformulier" class="card" style="padding:2rem 1.8rem" action="https://formsubmit.co/info@partyklik.com" method="POST">
+          <!-- Verzenden gaat via fetch (script onderaan): bij succes door naar bedankt.html,
+               bij een storing een melding met mail- en WhatsApp-alternatief in plaats van
+               een foutpagina. Daarom het AJAX-endpoint en geen _next. -->
+          <form id="offerteformulier" class="card" style="padding:2rem 1.8rem" action="https://formsubmit.co/ajax/info@partyklik.com" method="POST">
             <input type="hidden" name="_subject" value="Nieuwe offerteaanvraag via partyklik.nl">
-            <input type="hidden" name="_next" value="https://partyklik.nl/bedankt.html">
             <!-- Leesbare tabelopmaak in de mail in plaats van een platte opsomming. -->
             <input type="hidden" name="_template" value="table">
             <!-- Geen reCAPTCHA: dat is een Google-tracker en die staat nergens op deze
@@ -122,6 +124,17 @@
               </div>
             </div>
             <button class="btn btn-primary" type="submit" style="margin-top:1.4rem">Verstuur aanvraag</button>
+            <!-- Blijft leeg tot versturen mislukt; het script zet dan de melding uit het
+                 sjabloon hieronder erin. Leeg is onzichtbaar (zie .form-status in style.css). -->
+            <div class="form-status" role="alert"></div>
+            <template id="formulier-fout">
+              <p><strong>Je aanvraag is niet verstuurd.</strong> Er ging iets mis bij het versturen, maar je gegevens zijn niet kwijt. Stuur ze met één klik via mail of WhatsApp: alles wat je hebt ingevuld staat er al in.</p>
+              <p class="form-status-acties">
+                <a class="btn btn-dark" data-kanaal="mail" href="mailto:info@partyklik.com">Mail je aanvraag</a>
+                <a class="btn btn-wa" data-kanaal="whatsapp" href="https://wa.me/31610643176" target="_blank" rel="noopener">Via WhatsApp</a>
+              </p>
+              <p>Opent er geen mailprogramma? Mail dan zelf naar <a href="mailto:info@partyklik.com">info@partyklik.com</a>. Of probeer het over een paar minuten nog eens.</p>
+            </template>
             <p class="form-note">We gebruiken je gegevens alleen om je aanvraag te beantwoorden en verkopen ze nooit door. Lees hoe we ermee omgaan in de <a href="privacy.html">privacyverklaring</a>.</p>
           </form>
 
@@ -210,15 +223,110 @@
       }
     })();
 
-    // Reply-to vullen met het ingevulde e-mailadres. Zonder dit komt de aanvraag
-    // binnen met FormSubmit als afzender en werkt 'Beantwoorden' niet.
+    // Versturen via fetch. Lukt het, dan door naar bedankt.html. Lukt het niet (serverfout,
+    // geen verbinding, onleesbaar antwoord, formulier niet geactiveerd, time-out), dan een
+    // melding met een voorgevulde mail- en WhatsApp-link, zodat de aanvraag toch aankomt.
     (function () {
       var form = document.getElementById("offerteformulier");
       if (!form) return;
-      form.addEventListener("submit", function () {
+      var knop = form.querySelector('button[type="submit"]');
+      var status = form.querySelector(".form-status");
+      var sjabloon = document.getElementById("formulier-fout");
+      var knoptekst = knop.textContent;
+      var bezig = false;
+
+      function veld(id) {
+        var el = document.getElementById(id);
+        if (!el) return "";
+        if (el.tagName === "SELECT") return el.value ? el.options[el.selectedIndex].text : "";
+        return el.value.trim();
+      }
+
+      // De ingevulde gegevens als leesbare tekst, voor de mail- en WhatsApp-link.
+      function samenvatting() {
+        var regels = [
+          ["Naam", veld("naam")],
+          ["E-mail", veld("email")],
+          ["Telefoon", veld("telefoon")],
+          ["Datum", veld("datum").replace(/^(\d{4})-(\d{2})-(\d{2})$/, "$3-$2-$1")],
+          ["Soort evenement", veld("soort")],
+          ["Pakket", veld("pakket")],
+          ["Locatie", veld("locatie")]
+        ].filter(function (r) { return r[1]; }).map(function (r) { return r[0] + ": " + r[1]; });
+        // Ingekort, zodat de mailto-link niet te lang wordt voor sommige mailprogramma's.
+        var bericht = veld("bericht");
+        if (bericht.length > 800) bericht = bericht.slice(0, 800) + " […]";
+        if (bericht) regels.push("", bericht);
+        return "Hoi PartyKlik,\n\nIk wil graag een offerte aanvragen.\n\n" + regels.join("\n");
+      }
+
+      function toonFout() {
+        bezig = false;
+        knop.disabled = false;
+        knop.textContent = knoptekst;
+        var tekst = samenvatting();
+        status.appendChild(sjabloon.content.cloneNode(true));
+        status.querySelector('[data-kanaal="mail"]').href =
+          "mailto:info@partyklik.com?subject=" + encodeURIComponent("Offerteaanvraag via partyklik.nl") +
+          "&body=" + encodeURIComponent(tekst.replace(/\n/g, "\r\n"));
+        status.querySelector('[data-kanaal="whatsapp"]').href =
+          "https://wa.me/31610643176?text=" + encodeURIComponent(tekst);
+        if (status.scrollIntoView) status.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+
+      // Terug vanaf bedankt.html: de browser kan deze pagina uit zijn cache terugzetten,
+      // mét de knop nog op "Versturen…". Dan de knop weer bruikbaar maken.
+      window.addEventListener("pageshow", function (e) {
+        if (!e.persisted) return;
+        bezig = false;
+        knop.disabled = false;
+        knop.textContent = knoptekst;
+      });
+
+      form.addEventListener("submit", function (e) {
+        // Reply-to vullen met het ingevulde e-mailadres. Zonder dit komt de aanvraag
+        // binnen met FormSubmit als afzender en werkt 'Beantwoorden' niet.
         var email = document.getElementById("email");
         var replyto = form.querySelector('input[name="_replyto"]');
         if (email && replyto) replyto.value = email.value.trim();
+
+        if (!window.fetch || !window.FormData) return; // heel oude browser: gewoon posten
+        e.preventDefault();
+        if (bezig) return;
+        bezig = true;
+        status.textContent = "";
+        knop.disabled = true;
+        knop.textContent = "Versturen…";
+
+        // Blijft de server hangen, dan na 20 seconden alsnog de melding.
+        var controller = window.AbortController ? new AbortController() : null;
+        var timer = controller ? window.setTimeout(function () { controller.abort(); }, 20000) : null;
+
+        fetch(form.action, {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: new FormData(form),
+          signal: controller ? controller.signal : undefined
+        })
+          .then(function (res) {
+            // FormSubmit antwoordt met {"success":"true"} (als tekst); true accepteren we ook.
+            return res.json().then(function (data) {
+              return res.ok && !!data && String(data.success) === "true";
+            }, function () {
+              return false;
+            });
+          })
+          .catch(function () {
+            return false;
+          })
+          .then(function (gelukt) {
+            window.clearTimeout(timer);
+            if (gelukt) {
+              window.location.href = "bedankt.html";
+            } else {
+              toonFout();
+            }
+          });
       });
     })();
   </script>

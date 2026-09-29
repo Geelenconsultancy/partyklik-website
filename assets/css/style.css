@@ -561,6 +561,8 @@ html.intro-pending .hero-inner { animation: pk-rise 0.7s ease-out 1.9s both; }
 
 .btn:active { transform: translateY(1px); }
 
+.btn:disabled { opacity: 0.7; cursor: progress; }
+
 .btn-primary {
   background: var(--accent);
   color: #fff;
@@ -1088,6 +1090,30 @@ details.faq-item .faq-body p:last-child { margin-bottom: 0; }
 }
 
 .form-note { font-size: 0.9rem; color: var(--ink-faint); margin-top: 1rem; }
+
+/* Melding als versturen mislukt. Het element staat altijd in de DOM (role="alert"),
+   zodat schermlezers de melding oppikken; zolang het leeg is, neemt het geen ruimte in. */
+.form-status:not(:empty) {
+  margin-top: 1.2rem;
+  padding: 1.1rem 1.2rem;
+  background: #fbeeeb;
+  border-left: 3px solid #b3402f;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.form-status p { color: var(--ink); font-size: 0.98rem; margin: 0 0 0.9em; }
+
+.form-status p:last-child { margin-bottom: 0; }
+
+.form-status strong { color: #8e2f22; }
+
+.form-status-acties { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+.form-status-acties .btn { font-size: 0.95rem; padding: 0.6rem 1.2rem; }
+
+.btn-wa { background: #1d7a46; color: #fff; }
+
+.btn-wa:hover { background: #146c3f; color: #fff; }
 
 /* --- Contact --- */
 

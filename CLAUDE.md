@@ -14,7 +14,8 @@ Statische marketingwebsite voor PartyKlik — verhuur van een bemande Magic Mirr
 - Alle prijzen **inclusief btw**: Basic €449, Standaard €549 (meest gekozen), Premium €699. Reiskosten: 30 km vanaf Zeist gratis, daarna €0,45/km. Partytent buitenlocatie €95.
 - USP altijd benoemen: de booth is **altijd bemand door een host** — complete beleving, geen doe-het-zelf-apparaat.
 - Contact: info@partyklik.com, +31 6 10 64 31 76, WhatsApp. Geen boekings-/betaalmodule (bewust buiten scope).
-- Offerteformulier post naar FormSubmit (info@partyklik.com) met redirect naar `bedankt.html`. Verborgen velden: `_subject`, `_next`, `_template=table`, `_captcha=false`, `_replyto` (wordt door een script onderaan `contact.html` bij verzenden gevuld met het ingevulde e-mailadres — zonder dat werkt "Beantwoorden" niet) en het honeypot-veld `_honey`.
+- Offerteformulier verstuurt via `fetch` (script onderaan `contact.html`) naar het AJAX-endpoint van FormSubmit (`formsubmit.co/ajax/info@partyklik.com`). Bij `{"success":"true"}` door naar `bedankt.html`; bij elke fout (serverfout, geen verbinding, geen JSON, activatie vereist, time-out na 20 s) een melding in `.form-status` met een voorgevulde mail- en WhatsApp-link, uit het sjabloon `#formulier-fout`. Verborgen velden: `_subject`, `_template=table`, `_captcha=false`, `_replyto` (wordt bij verzenden gevuld met het ingevulde e-mailadres — zonder dat werkt "Beantwoorden" niet) en het honeypot-veld `_honey`.
+- Test het formulier altijd met een onderschepte `fetch`: elke echte inzending landt in de zakelijke inbox van de klant.
 
 ## Juridisch
 - `privacy.html` en `algemene-voorwaarden.html`; vanaf elke pagina bereikbaar via `.footer-legal`.
