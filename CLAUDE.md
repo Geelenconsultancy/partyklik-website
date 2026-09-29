@@ -22,7 +22,7 @@ Statische marketingwebsite voor PartyKlik — verhuur van een bemande Magic Mirr
 - `privacy.html` en `algemene-voorwaarden.html`; vanaf elke pagina bereikbaar via `.footer-legal`.
 - **Geen cookiebanner toevoegen.** De site plaatst geen tracking- of advertentiecookies; alleen `sessionStorage` (`pk-intro`) voor de intro-animatie, en functionele opslag is vrijgesteld van toestemming (art. 11.7a lid 3 Telecommunicatiewet). Een banner zou toestemming vragen voor iets wat niet gebeurt.
 - Daaruit volgt een harde regel: **geen externe scripts, fonts, pixels, embeds of kaarten toevoegen.** Doe je dat toch, dan wordt een cookiebanner verplicht én klopt de cookieparagraaf in `privacy.html` niet meer.
-- `{{MARKERS}}` in `<span class="fill">` zijn nog te leveren bedrijfsgegevens (KvK, btw-id). Zie `../INVULLEN.md`. Ze zijn expres geel gemarkeerd; laat ze staan tot de echte waarden er zijn.
+- Alle bedrijfsgegevens zijn ingevuld (sinds 29 september 2026 geen `{{MARKERS}}` meer). Komt er ooit weer een ontbrekend gegeven bij: markeer het met `<span class="fill">{{NAAM}}</span>` (geel, valt op) en zet het in `../INVULLEN.md`.
 - Betaaltermijn en annuleringsstaffel staan op **drie** plekken: `algemene-voorwaarden.html` (art. 6 en 7), `faq.html` en de `price-note` in `pakketten.html`. Wijzig ze altijd samen.
 
 ## SEO
