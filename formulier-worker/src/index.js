@@ -62,11 +62,12 @@ export function maakMail(a) {
     "Nieuwe offerteaanvraag via partyklik.nl\n\n" +
     regels.map((v) => (v === "Bericht" ? `\n${v}:\n${a[v]}` : `${v}: ${a[v]}`)).join("\n") +
     "\n\nBeantwoorden gaat rechtstreeks naar de aanvrager.";
+  // Regeleinden als <br>: Outlook voor Windows negeert white-space:pre-wrap.
   const rijen = regels
     .map(
       (v) =>
         `<tr><th style="text-align:left;vertical-align:top;padding:6px 12px 6px 0;white-space:nowrap">${escapeHtml(v)}</th>` +
-        `<td style="padding:6px 0;white-space:pre-wrap">${escapeHtml(a[v])}</td></tr>`
+        `<td style="padding:6px 0">${escapeHtml(a[v]).replace(/\r?\n/g, "<br>")}</td></tr>`
     )
     .join("");
   const html =
