@@ -4,10 +4,10 @@
 // naar info@partyklik.com, met de aanvrager als Reply-To. Antwoordt met
 // {"success":true} of {"success":false}; contact.html toont bij false het vangnet.
 //
-// Instellingen (Cloudflare → Worker → Settings → Variables and Secrets):
+// Instellingen (zie README.md in deze map):
 //   RESEND_API_KEY  verplicht, als Secret. Nooit in deze (publieke) repo zetten.
-//   TO              optioneel; standaard info@partyklik.com. Handig om eerst naar
-//                   je eigen adres te testen.
+//   TO              optioneel; standaard info@partyklik.com. Alleen om te testen, via
+//                   `wrangler deploy --var TO:…`; de volgende gewone deploy wist hem.
 //   FROM            optioneel; standaard "PartyKlik website <formulier@partyklik.nl>".
 //
 // De ontvanger staat vast in de Worker en komt nooit uit het formulier, zodat niemand
@@ -62,11 +62,12 @@ export function maakMail(a) {
     "Nieuwe offerteaanvraag via partyklik.nl\n\n" +
     regels.map((v) => (v === "Bericht" ? `\n${v}:\n${a[v]}` : `${v}: ${a[v]}`)).join("\n") +
     "\n\nBeantwoorden gaat rechtstreeks naar de aanvrager.";
+  // Regeleinden als <br>: Outlook voor Windows negeert white-space:pre-wrap.
   const rijen = regels
     .map(
       (v) =>
         `<tr><th style="text-align:left;vertical-align:top;padding:6px 12px 6px 0;white-space:nowrap">${escapeHtml(v)}</th>` +
-        `<td style="padding:6px 0;white-space:pre-wrap">${escapeHtml(a[v])}</td></tr>`
+        `<td style="padding:6px 0">${escapeHtml(a[v]).replace(/\r?\n/g, "<br>")}</td></tr>`
     )
     .join("");
   const html =
