@@ -8,13 +8,13 @@
 //   RESEND_API_KEY  verplicht, als Secret. Nooit in deze (publieke) repo zetten.
 //   TO              optioneel; standaard info@partyklik.com. Alleen om te testen, via
 //                   `wrangler deploy --var TO:…`; de volgende gewone deploy wist hem.
-//   FROM            optioneel; standaard "PartyKlik website <formulier@partyklik.nl>".
+//   FROM            optioneel; standaard "Offerteformulier PartyKlik <formulier@partyklik.nl>".
 //
 // De ontvanger staat vast in de Worker en komt nooit uit het formulier, zodat niemand
 // deze Worker kan misbruiken om naar andere adressen te mailen.
 
 const STANDAARD_TO = "info@partyklik.com";
-const STANDAARD_FROM = "PartyKlik website <formulier@partyklik.nl>";
+const STANDAARD_FROM = "Offerteformulier PartyKlik <formulier@partyklik.nl>";
 const TOEGESTANE_HERKOMST = ["https://partyklik.nl", "https://www.partyklik.nl"];
 
 // Velden uit het formulier, in de volgorde van de mail. Alles daarbuiten negeren we.

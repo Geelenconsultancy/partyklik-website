@@ -18,7 +18,7 @@ Live sinds 29 september 2026.
 | Worker | `partyklik-formulier` in het Cloudflare-account van Sjors → https://partyklik-formulier.geelenconsultancy.workers.dev |
 | Secret `RESEND_API_KEY` | Resend-sleutel *partyklik-formulier (Cloudflare Worker)*: alleen *sending access*, alleen voor partyklik.nl |
 | Resend-domein | `partyklik.nl`, regio eu-west-1 (Ierland), open- en kliktracking uit |
-| Afzender | `PartyKlik website <formulier@partyklik.nl>` |
+| Afzender | `Offerteformulier PartyKlik <formulier@partyklik.nl>` |
 
 De DNS-records voor Resend staan bij TransIP (Domeinen → partyklik.nl → DNS), op subdomeinen.
 Het null-MX- en SPF-record op `@` blijven daardoor ongemoeid. Haal deze records niet weg,
