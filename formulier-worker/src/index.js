@@ -3,8 +3,9 @@
 // Ontvangt het formulier van partyklik.nl/contact.html en mailt de aanvraag via Resend
 // naar info@partyklik.com, met de aanvrager als Reply-To. Antwoordt met
 // {"success":true} of {"success":false}; contact.html toont bij false het vangnet.
-// Een gewone formulier-POST (JavaScript uit) krijgt geen JSON maar een pagina: bij succes
-// een doorverwijzing naar bedankt.html, anders een foutpagina met hetzelfde vangnet.
+// Een gewone formulier-POST vanaf partyklik.nl (JavaScript uit) krijgt geen JSON maar een
+// pagina: bij succes een doorverwijzing naar bedankt.html, anders een foutpagina met
+// hetzelfde vangnet.
 //
 // Instellingen (zie README.md in deze map):
 //   RESEND_API_KEY  verplicht, als Secret. Nooit in deze (publieke) repo zetten.
@@ -103,7 +104,8 @@ export function samenvatting(a) {
     .filter((r) => r[1])
     .map((r) => `${r[0]}: ${r[1]}`);
   // Ingekort, zodat de mailto-link niet te lang wordt voor sommige mailprogramma's.
-  let bericht = a.Bericht;
+  // Zonder JavaScript stuurt de browser regeleinden als \r\n; hier altijd \n.
+  let bericht = a.Bericht.replace(/\r\n?/g, "\n");
   if (bericht.length > 800) bericht = bericht.slice(0, 800) + " […]";
   if (bericht) regels.push("", bericht);
   return "Hoi PartyKlik,\n\nIk wil graag een offerte aanvragen.\n\n" + regels.join("\n");
@@ -117,7 +119,8 @@ function wilPagina(request) {
 
 // Het vangnet van contact.html als losse pagina, voor bezoekers zonder JavaScript.
 export function foutpagina(status, a, ongeldig) {
-  const tekst = samenvatting(a);
+  // Inkorten kan een emoji halveren; encodeURIComponent weigert zo'n half teken.
+  const tekst = samenvatting(a).toWellFormed();
   const mail =
     "mailto:info@partyklik.com?subject=" + encodeURIComponent("Offerteaanvraag via partyklik.nl") +
     "&body=" + encodeURIComponent(tekst.replace(/\n/g, "\r\n"));
@@ -125,6 +128,9 @@ export function foutpagina(status, a, ongeldig) {
   const uitleg = ongeldig
     ? "Vul je naam en een geldig e-mailadres in en probeer het opnieuw. Of stuur je aanvraag met één klik via mail of WhatsApp: alles wat je hebt ingevuld staat er al in."
     : "Er ging iets mis bij het versturen, maar je gegevens zijn niet kwijt. Stuur ze met één klik via mail of WhatsApp: alles wat je hebt ingevuld staat er al in.";
+  const terug = ongeldig
+    ? "Of ga met de terugknop van je browser terug naar het formulier: wat je hebt ingevuld staat er dan nog."
+    : `Of ga <a href="https://partyklik.nl/contact.html">terug naar het formulier</a> en probeer het over een paar minuten nog eens.`;
   const html = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -158,7 +164,7 @@ a{color:#8f6519}
 <a class="btn mail" href="${escapeHtml(mail)}">Mail je aanvraag</a>
 <a class="btn wa" href="${escapeHtml(whatsapp)}" target="_blank" rel="noopener">Via WhatsApp</a>
 </p>
-<p class="klein">Opent er geen mailprogramma? Mail dan zelf naar <a href="mailto:info@partyklik.com">info@partyklik.com</a> of bel <a href="tel:+31610643176">06 10 64 31 76</a>. Of ga <a href="https://partyklik.nl/contact.html">terug naar het formulier</a> en probeer het over een paar minuten nog eens.</p>
+<p class="klein">Opent er geen mailprogramma? Mail dan zelf naar <a href="mailto:info@partyklik.com">info@partyklik.com</a> of bel <a href="tel:+31610643176">+31 6 10 64 31 76</a>. ${terug}</p>
 </div>
 </main>
 </body>
@@ -205,8 +211,9 @@ export default {
     if (!env.RESEND_API_KEY) return mislukt(500, aanvraag);
 
     const mail = maakMail(aanvraag);
+    let res;
     try {
-      const res = await fetch("https://api.resend.com/emails", {
+      res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -218,12 +225,12 @@ export default {
           html: mail.html,
         }),
       });
-      if (!res.ok) {
-        console.log("Resend weigerde:", res.status, await res.text());
-        return mislukt(502, aanvraag);
-      }
     } catch (e) {
       console.log("Resend onbereikbaar:", e && e.message);
+      return mislukt(502, aanvraag);
+    }
+    if (!res.ok) {
+      console.log("Resend weigerde:", res.status, await res.text().catch(() => ""));
       return mislukt(502, aanvraag);
     }
     return gelukt();
