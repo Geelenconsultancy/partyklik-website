@@ -9,6 +9,8 @@
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <meta name="theme-color" content="#191521">
   <link rel="stylesheet" href="assets/css/style.css?v=18">
+  <!-- Zonder JavaScript is het toelichtingsveld bij 'Anders' altijd zichtbaar. -->
+  <noscript><style>#veld-soort-anders[hidden]{display:grid}</style></noscript>
   <script>try{if(!sessionStorage.getItem("pk-intro"))document.documentElement.classList.add("intro-pending")}catch(e){}</script>
   <meta property="og:type" content="website">
   <meta property="og:locale" content="nl_NL">
@@ -60,7 +62,9 @@
           <!-- Verzenden gaat via fetch (script onderaan) naar onze eigen verzender, een
                Cloudflare Worker die via Resend mailt (broncode in formulier-worker/). Die
                zet onderwerp, opmaak en Reply-To zelf. Bij succes door naar bedankt.html,
-               bij een storing een melding met mail- en WhatsApp-alternatief. -->
+               bij een storing een melding met mail- en WhatsApp-alternatief. Zonder
+               JavaScript post de browser zelf; dan stuurt de Worker door naar bedankt.html
+               of toont hij een eigen pagina met datzelfde alternatief. -->
           <form id="offerteformulier" class="card" style="padding:2rem 1.8rem" action="https://partyklik-formulier.geelenconsultancy.workers.dev" method="POST">
             <!-- Geen reCAPTCHA: dat is een Google-tracker en die staat nergens op deze
                  site. Dit honeypot-veld vangt de bots af. -->
@@ -306,7 +310,7 @@
       });
 
       form.addEventListener("submit", function (e) {
-        if (!window.fetch || !window.FormData) return; // heel oude browser: gewoon posten
+        if (!window.fetch || !window.FormData) return; // heel oude browser: gewoon posten, de Worker stuurt door
         e.preventDefault();
         if (bezig) return;
         bezig = true;

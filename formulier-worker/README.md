@@ -62,3 +62,21 @@ Code aanpassen en opnieuw uitrollen, in deze map (met een Cloudflare-token met h
 
 Bij `success:false` toont `contact.html` het vangnet: een melding met voorgevulde mail- en
 WhatsApp-link.
+
+### Zonder JavaScript
+
+Staat JavaScript uit, dan post de browser het formulier zelf, met `Accept: text/html` en
+zonder `application/json`. Daaraan herkent de Worker het, en hij antwoordt met een pagina in
+plaats van JSON:
+
+| Situatie | HTTP | Antwoord |
+|---|---|---|
+| Verstuurd (of honeypot ingevuld) | 303 | Doorverwijzing naar https://partyklik.nl/bedankt.html |
+| Naam leeg of e-mailadres ongeldig | 400 | Foutpagina: "nog niet verstuurd", met voorgevulde mail- en WhatsApp-link |
+| `RESEND_API_KEY` ontbreekt / Resend faalt | 500 / 502 | Foutpagina: "niet verstuurd", met voorgevulde mail- en WhatsApp-link |
+| Niet vanaf partyklik.nl | 403 | `{"success":false}`, zoals hierboven |
+
+De foutpagina staat in de Worker zelf (`foutpagina()`), zonder scripts of externe bronnen
+(afgedwongen met een Content-Security-Policy) en met `noindex`. Een verzoek met
+`Accept: application/json` (de fetch in `contact.html`) of zonder `text/html` (zoals curl)
+krijgt altijd JSON, zoals hierboven.
