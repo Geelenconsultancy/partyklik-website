@@ -96,9 +96,12 @@
       });
       if (!revealItems.length) {
         window.removeEventListener("scroll", revealCheck);
+        window.removeEventListener("resize", revealCheck);
       }
     };
     window.addEventListener("scroll", revealCheck, { passive: true });
+    // Ook bij een hoger venster: Googlebot scrolt niet, maar rekt het venster op.
+    window.addEventListener("resize", revealCheck);
     revealCheck();
   }
 

@@ -30,7 +30,12 @@ Statische marketingwebsite voor PartyKlik — verhuur van een bemande Magic Mirr
 - JSON-LD: LocalBusiness op de homepage, FAQPage op `faq.html`. Houd die synchroon met zichtbare content.
 - Doelzoekwoorden: "photobooth huren Zeist/Utrecht", "magic mirror huren", "spiegel photobooth bruiloft/bedrijfsfeest".
 - Bij SEO-wijzigingen: pas zichtbare tekst én metadata samen aan; nooit keyword-stuffing — de toon blijft menselijk.
+- Interne links naar de homepage zijn `./`, nooit `index.html`. De canonical is `https://partyklik.nl/`; links naar `index.html` geven in Search Console "Alternatieve pagina met correcte canonieke tag".
+- Uitzondering: `404.html` gebruikt overal root-paden (`/`, `/assets/...`, `/privacy.html`). GitHub Pages toont die pagina op elk onbekend pad, ook dieper (bv. `/a/b/`), en daar breken relatieve paden de stylesheet, het logo en de links. Kopieer je een header of footer naar `404.html`, zet de paden dan om.
+- `bedankt.html` en `404.html` blijven uit Google via `<meta name="robots" content="noindex">`, niet via `robots.txt`: een geblokkeerde pagina kan Google niet lezen, dus dan ziet hij de noindex ook niet.
+- Search Console meldt "Pagina met omleiding" (http/www → https://partyklik.nl), "Alternatieve pagina met correcte canonieke tag" (bv. `contact.html?pakket=…`) en "Uitgesloten door noindex-tag" (`bedankt.html`) als normale bijvangst. Daar hoef je niets aan te doen.
+- Inhoud die met JS in beeld komt (zoals de stappen op de homepage) moet ook zichtbaar worden als het venster groter wordt, niet alleen bij scrollen: Googlebot scrolt niet.
 
 ## Beheer
 - Eigenaar: Sjors Geelen (Geelen Consultancy, sjors@sebero.nl); klant: Arjan (PartyKlik).
-- Deploy: statisch uploaden naar hosting; domein partyklik.nl staat bij TransIP.
+- Deploy: GitHub Pages vanaf `main` (custom domain via `CNAME`); elke merge naar `main` wordt automatisch uitgerold (de Pages-build duurt ongeveer een minuut; GitHub Pages cachet tot 10 minuten). Domein partyklik.nl staat bij TransIP, met A-records naar GitHub Pages en `www` als CNAME naar `geelenconsultancy.github.io`.

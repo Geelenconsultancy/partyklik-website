@@ -29,4 +29,4 @@ en open http://localhost:8000.
 
 ## Deploy
 
-Upload de volledige inhoud van deze map naar de webroot van de hosting. `sitemap.xml` en `robots.txt` staan in de root. Het offerteformulier post naar een aparte Cloudflare Worker; hoe je die beheert staat in `formulier-worker/README.md`.
+De site draait op GitHub Pages: elke merge naar `main` wordt automatisch uitgerold naar https://partyklik.nl (custom domain via `CNAME`). `sitemap.xml` en `robots.txt` staan in de root. Het offerteformulier post naar een aparte Cloudflare Worker; hoe je die beheert staat in `formulier-worker/README.md`.

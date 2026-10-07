@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /bedankt.html
 
 Sitemap: https://partyklik.nl/sitemap.xml
