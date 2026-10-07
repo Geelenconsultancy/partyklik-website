@@ -30,7 +30,9 @@ Statische marketingwebsite voor PartyKlik — verhuur van een bemande Magic Mirr
 - JSON-LD: LocalBusiness op de homepage, FAQPage op `faq.html`. Houd die synchroon met zichtbare content.
 - Doelzoekwoorden: "photobooth huren Zeist/Utrecht", "magic mirror huren", "spiegel photobooth bruiloft/bedrijfsfeest".
 - Bij SEO-wijzigingen: pas zichtbare tekst én metadata samen aan; nooit keyword-stuffing — de toon blijft menselijk.
+- Interne links naar de homepage zijn `./` (in `404.html`: `/`), nooit `index.html`. De canonical is `https://partyklik.nl/`; links naar `index.html` geven in Search Console "Alternatieve pagina met correcte canonieke tag".
+- Search Console meldt "Pagina met omleiding" (http/www → https://partyklik.nl) en "Alternatieve pagina met correcte canonieke tag" (bv. `contact.html?pakket=…`) als normale bijvangst. Daar hoef je niets aan te doen.
 
 ## Beheer
 - Eigenaar: Sjors Geelen (Geelen Consultancy, sjors@sebero.nl); klant: Arjan (PartyKlik).
-- Deploy: statisch uploaden naar hosting; domein partyklik.nl staat bij TransIP.
+- Deploy: GitHub Pages vanaf `main` (custom domain via `CNAME`); elke merge naar `main` staat binnen een minuut live. Domein partyklik.nl staat bij TransIP, met A-records naar GitHub Pages en `www` als CNAME naar `geelenconsultancy.github.io`.
