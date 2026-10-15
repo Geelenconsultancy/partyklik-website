@@ -8,7 +8,7 @@
   <link rel="canonical" href="https://partyklik.nl/contact.html">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <meta name="theme-color" content="#191521">
-  <link rel="stylesheet" href="assets/css/style.css?v=16">
+  <link rel="stylesheet" href="assets/css/style.css?v=17">
   <script>try{if(!sessionStorage.getItem("pk-intro"))document.documentElement.classList.add("intro-pending")}catch(e){}</script>
   <meta property="og:type" content="website">
   <meta property="og:locale" content="nl_NL">
@@ -57,9 +57,8 @@
     <section class="section">
       <div class="wrap">
         <div class="grid-2" style="align-items:start">
-          <form id="offerteformulier" class="card" style="padding:2rem 1.8rem" action="https://formsubmit.co/info@partyklik.com" method="POST">
+          <form id="offerteformulier" class="card" style="padding:2rem 1.8rem" action="https://formsubmit.co/ajax/info@partyklik.com" method="POST">
             <input type="hidden" name="_subject" value="Nieuwe offerteaanvraag via partyklik.nl">
-            <input type="hidden" name="_next" value="https://partyklik.nl/bedankt.html">
             <!-- Leesbare tabelopmaak in de mail in plaats van een platte opsomming. -->
             <input type="hidden" name="_template" value="table">
             <!-- Geen reCAPTCHA: dat is een Google-tracker en die staat nergens op deze
@@ -122,6 +121,7 @@
               </div>
             </div>
             <button class="btn btn-primary" type="submit" style="margin-top:1.4rem">Verstuur aanvraag</button>
+            <p class="form-status" role="alert" hidden></p>
             <p class="form-note">We gebruiken je gegevens alleen om je aanvraag te beantwoorden en verkopen ze nooit door. Lees hoe we ermee omgaan in de <a href="privacy.html">privacyverklaring</a>.</p>
           </form>
 
@@ -210,15 +210,51 @@
       }
     })();
 
-    // Reply-to vullen met het ingevulde e-mailadres. Zonder dit komt de aanvraag
-    // binnen met FormSubmit als afzender en werkt 'Beantwoorden' niet.
+    // Verzenden via fetch. Lukt het niet — storing bij de formulierdienst, geen
+    // internet — dan krijgt de bezoeker een duidelijke melding met e-mail en
+    // WhatsApp als alternatief. Een aanvraag mag nooit stil verdwijnen.
     (function () {
       var form = document.getElementById("offerteformulier");
-      if (!form) return;
-      form.addEventListener("submit", function () {
+      if (!form || !window.fetch || !window.URLSearchParams) return;
+      var knop = form.querySelector('button[type="submit"]');
+      var status = form.querySelector(".form-status");
+      var knopTekst = knop ? knop.textContent : "";
+
+      function toonFout() {
+        status.innerHTML =
+          "Het versturen is helaas niet gelukt. Stuur je aanvraag even rechtstreeks naar " +
+          '<a href="mailto:info@partyklik.com">info@partyklik.com</a> of via ' +
+          '<a href="https://wa.me/31610643176" target="_blank" rel="noopener">WhatsApp</a>' +
+          " \u2014 dan reageren we net zo snel.";
+        status.hidden = false;
+        if (knop) { knop.disabled = false; knop.textContent = knopTekst; }
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Reply-to vullen, zodat 'Beantwoorden' in de mailbox naar de aanvrager gaat.
         var email = document.getElementById("email");
         var replyto = form.querySelector('input[name="_replyto"]');
         if (email && replyto) replyto.value = email.value.trim();
+
+        status.hidden = true;
+        if (knop) { knop.disabled = true; knop.textContent = "Versturen\u2026"; }
+
+        fetch(form.action, {
+          method: "POST",
+          headers: { "Accept": "application/json" },
+          body: new URLSearchParams(new FormData(form))
+        })
+          .then(function (r) { return r.json().catch(function () { return {}; }); })
+          .then(function (data) {
+            if (String(data.success) === "true") {
+              window.location.href = "bedankt.html";
+            } else {
+              toonFout();
+            }
+          })
+          .catch(toonFout);
       });
     })();
   </script>
