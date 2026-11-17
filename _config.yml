@@ -1,0 +1,13 @@
+# GitHub Pages bouwt deze site met Jekyll. Wat hieronder staat, komt NIET op partyklik.nl:
+# het zijn notities voor het beheer en de code van de formulierverzender (die draait bij Cloudflare).
+# Bestanden en mappen die met _ of . beginnen, publiceert Jekyll sowieso niet.
+# Zet hier elk nieuw intern bestand bij; de repo zelf blijft openbaar op github.com.
+exclude:
+  - CLAUDE.md
+  - README.md
+  - formulier-worker/
+
+# Geen thema. Zonder deze regel voegt GitHub Pages het standaardthema (Primer) toe, en dat
+# schrijft zijn eigen assets/css/style.css over de huisstijl heen; alleen de volgorde van
+# wegschrijven zorgt er dan voor dat onze eigen style.css wint.
+theme: null
