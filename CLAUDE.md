@@ -37,5 +37,5 @@ Statische marketingwebsite voor PartyKlik — verhuur van een bemande Magic Mirr
 - Inhoud die met JS in beeld komt (zoals de stappen op de homepage) moet ook zichtbaar worden als het venster groter wordt, niet alleen bij scrollen: Googlebot scrolt niet.
 
 ## Beheer
-- Eigenaar: Sjors Geelen (Geelen Consultancy, sjors@sebero.nl); klant: Arjan (PartyKlik).
+- Eigenaar: Sjors Geelen (Geelen Consultancy, sjors@geelenconsultancy.nl); klant: Arjan (PartyKlik).
 - Deploy: GitHub Pages vanaf `main` (custom domain via `CNAME`); elke merge naar `main` wordt automatisch uitgerold (de Pages-build duurt ongeveer een minuut; GitHub Pages cachet tot 10 minuten). Domein partyklik.nl staat bij TransIP, met A-records naar GitHub Pages en `www` als CNAME naar `geelenconsultancy.github.io`.
