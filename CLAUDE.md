@@ -8,7 +8,7 @@ Statische marketingwebsite voor PartyKlik — verhuur van een bemande Magic Mirr
 - `assets/js/main.js` — mobiel menu en lightbox.
 - `assets/img/` — geoptimaliseerde foto's (`*-800.jpg` voor thumbnails, `*-1600.jpg` voor lightbox/hero). Bronbestanden staan buiten de repo in `../content/fotos/`.
 - Fonts self-hosted in `assets/fonts/` (AVG-vriendelijk, geen Google Fonts CDN).
-- GitHub Pages bouwt de site met Jekyll (er is bewust geen `.nojekyll`). `_config.yml` houdt `CLAUDE.md`, `README.md` en `formulier-worker/` van partyklik.nl af; zet elk nieuw intern bestand daar bij. In de openbare repo op github.com blijven ze wel leesbaar, dus schrijf hier niets wat niet openbaar mag. Gevolgen van Jekyll: bestanden en mappen die met `_` of `.` beginnen komen niet op de site, en een bestand dat begint met `---` wordt als sjabloon verwerkt.
+- GitHub Pages bouwt de site met Jekyll (er is bewust geen `.nojekyll`). `_config.yml` houdt `CLAUDE.md`, `README.md` en `formulier-worker/` van partyklik.nl af; zet elk nieuw intern bestand daar bij. In de openbare repo op github.com blijven ze wel leesbaar, dus schrijf hier niets wat niet openbaar mag. Gevolgen van Jekyll: bestanden en mappen die met `_` of `.` beginnen komen niet op de site, en een bestand dat begint met `---` wordt als sjabloon verwerkt. Laat `theme: null` in `_config.yml` staan: zonder die regel voegt GitHub zijn standaardthema toe, met een eigen `assets/css/style.css` die met de huisstijl botst.
 
 ## Afspraken
 - Taal: Nederlands, tutoyeren ("je/jullie"), warme toon. Slogan: "Maak herinneringen. Lach samen. Bewaar het moment."

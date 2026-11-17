@@ -6,3 +6,8 @@ exclude:
   - CLAUDE.md
   - README.md
   - formulier-worker/
+
+# Geen thema. Zonder deze regel voegt GitHub Pages het standaardthema (Primer) toe, en dat
+# schrijft zijn eigen assets/css/style.css over de huisstijl heen; alleen de volgorde van
+# wegschrijven zorgt er dan voor dat onze eigen style.css wint.
+theme: null
